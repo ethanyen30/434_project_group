@@ -52,12 +52,54 @@
             </div>
         </div>
 
-        <div id="choices" class="tabcontent">
-            <h1>Here are some choices</h1>
-            <p>1. a radio button entry option</p>
-            <p>2. a drop-down list entry option</p>
-            <p>3. a traditional button that when pressed will display text that is somehow reflecting the options chosen</p>
-        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--Radio button from https://www.w3schools.com/howto/howto_css_custom_checkbox.asp-->
+<!-- provides button choices for pizza and cake also gives a drop down for ham and chicken-->
+<div id="choices" class="tabcontent">
+    <h1>Choices</h1>
+    <p>Food #1:</p>
+    <input type="radio" name="food1" value="Pizza"> 
+    Pizza
+    <input type="radio" name="food1" value="Cake">
+    Cake
+
+    <p>Food #2:</p>
+    <select id="food2">
+        <option value="Ham">Ham</option>
+        <option value="Chicken">Chicken</option>
+    </select>
+    <br><br>
+    <button onclick="displayChoices()">Show Choices</button>
+    <p id="results"></p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         <div id="todo" class="tabcontent">
             <h1>Here is a ToDo list</h1>
