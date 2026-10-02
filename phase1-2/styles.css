@@ -1,0 +1,67 @@
+.device {
+  margin:auto; 
+  width: 640px;
+  height: 960px;
+  overflow: hidden;
+  background-color: powderblue;
+  position: relative;
+}
+
+.tabs {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+}
+
+.tablink {
+  flex: 1;
+  min-width: 0;
+  outline: none;
+  cursor: pointer;
+  padding: 10px 16px;
+  box-sizing: border-box;
+}
+
+.tabcontent {
+    display: none;
+    text-align: center;
+}
+
+.alert {
+    padding: 20px;
+    background-color: green; 
+    color: white;
+    display: none;
+}
+.closebtn {
+    color: white;
+    float: right;
+    cursor: pointer;
+}
+
+#text {
+    position: absolute;
+    inset: 0 0 40px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 0 16px;
+}
+
+#text p {
+    font-size: 20px;
+    line-height: 2;
+    margin-bottom: 10em;
+}
+
+#lr {
+    position: absolute;
+    inset: 0 0 40px;
+}
+
+#lr p {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    margin: 0;
+}

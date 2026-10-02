@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 1.2</title>
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+<body>
+    <div class="device">
+        <div id="text" class="tabcontent">
+            <h1>Scrollable Text</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse bibendum egestas fringilla.</p>
+
+            <p>Phasellus varius leo vel tristique suscipit. Sed non elementum felis. Mauris ligula sapien, aliquam et elit a, suscipit ultricies nunc.</p>
+
+            <p>facilisi. Cras eu erat dictum, commodo magna eu, hendrerit ipsum. Vivamus ullamcorper euismod porttitor.</p>
+
+            <p>ut sem ac lectus vestibulum porta. Aenean sit amet erat id elit maximus lacinia. In ornare sit amet lectus a commodo.</p>
+
+            <p>Nullam mi nunc, dignissim vel tortor iaculis, consequat tincidunt purus. Vestibulum ligula justo, maximus sit amet libero ut, ornare efficitur ante.</p>
+        </div>
+
+        <div id="lr" class="tabcontent">
+            <h1>Text in lower right</h1>
+            <p>Down Here</p>
+        </div>
+
+        <div id="colors" class="tabcontent">
+            <h1>Lots of Colors and Pie Charts</h1>
+            <p>First yellow line and background black</p>
+            <p>Second purple line and background yellow</p>
+            <p>Pie chart with multiple bright colors</p>
+        </div>
+
+        <div id="profile" class="tabcontent">
+            <h1>Profile</h1>
+            <img src="SmileyFace.png" alt="Smiley Face" width="100" height="100" onclick="document.getElementById('thealert').style.display='block';">
+            <p><b>Smiley Face</b></p>
+            <div id="thealert" class="alert" style="display: none;">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">×</span>
+                Smiley Face is even happier now!
+            </div>
+        </div>
+
+        <div id="choices" class="tabcontent">
+            <h1>Here are some choices</h1>
+            <p>1. a radio button entry option</p>
+            <p>2. a drop-down list entry option</p>
+            <p>3. a traditional button that when pressed will display text that is somehow reflecting the options chosen</p>
+        </div>
+
+        <div id="todo" class="tabcontent">
+            <h1>Here is a ToDo list</h1>
+            <p>To do list</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tablink" onclick="displayTab('text')" id="defaultOpen">Text</button>
+            <button class="tablink" onclick="displayTab('lr')">LR</button>
+            <button class="tablink" onclick="displayTab('colors')">Colors</button>
+            <button class="tablink" onclick="displayTab('profile')">Profile</button>
+            <button class="tablink" onclick="displayTab('choices')">Choices</button>
+            <button class="tablink" onclick="displayTab('todo')">Todo</button>
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
