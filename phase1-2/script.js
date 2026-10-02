@@ -26,3 +26,31 @@ function displayChoices() {
       "food 1 is  " + food1.value + " and food 2 is  " + food2;
   }
 }
+
+function addTodoItem() {
+  let input = document.getElementById("todoInput");
+  let taskText = input.value.trim();
+  if (taskText === "") return;
+  let ul = document.getElementById("todoList");
+  let li = document.createElement("li");
+  li.style.margin = "10px 0";
+  li.style.display = "flex";
+  li.style.justifyContent = "center";
+  li.style.alignItems = "center";
+  li.style.gap = "10px";
+  let span = document.createElement("span");
+  span.textContent = taskText;
+  span.style.cursor = "pointer";
+  span.onclick = function() {
+    span.style.textDecoration = span.style.textDecoration === "line-through" ? "none" : "line-through";
+  };
+  let deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Delete";
+  deleteBtn.onclick = function() {
+    ul.removeChild(li);
+  };
+  li.appendChild(span);
+  li.appendChild(deleteBtn);
+  ul.appendChild(li);
+  input.value = "";
+}
