@@ -28,10 +28,18 @@
         </div>
 
         <div id="colors" class="tabcontent">
-            <h1>Lots of Colors and Pie Charts</h1>
-            <p>First yellow line and background black</p>
-            <p>Second purple line and background yellow</p>
-            <p>Pie chart with multiple bright colors</p>
+            <h1>Colors & Chart</h1>
+            <p class="color-line-1">First yellow line and background black</p>
+            <p class="color-line-2">Second purple line and background yellow</p>
+            <div class="chart-container">   
+                <!-- Multi-colored SVG Pie Chart -->
+                <svg viewBox="0 0 32 32" class="pie-chart">
+                    <circle r="16" cx="16" cy="16" stroke="#e74c3c" stroke-width="32" stroke-dasharray="25 100" fill="none" />
+                    <circle r="16" cx="16" cy="16" stroke="#3498db" stroke-width="32" stroke-dasharray="35 100" stroke-dashoffset="-25" fill="none" />
+                    <circle r="16" cx="16" cy="16" stroke="#2ecc71" stroke-width="32" stroke-dasharray="20 100" stroke-dashoffset="-60" fill="none" />
+                    <circle r="16" cx="16" cy="16" stroke="#f1c40f" stroke-width="32" stroke-dasharray="20 100" stroke-dashoffset="-80" fill="none" />
+                </svg>
+            </div>
         </div>
 
         <div id="profile" class="tabcontent">

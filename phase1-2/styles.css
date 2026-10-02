@@ -65,3 +65,48 @@
     bottom: 16px;
     margin: 0;
 }
+/* Tab 3: Colors Container & Layout */
+#colors {
+  position: absolute;
+  inset: 0 0 50px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+/* Line 1: Yellow text, Black background */
+.color-line-1 {
+  color: #ffff00;
+  background-color: #000000;
+  font-size: 22px;
+  font-weight: bold;
+  padding: 12px;
+  margin: 16px auto;
+  border-radius: 4px;
+}
+
+/* Line 2: Purple text, Yellow background */
+.color-line-2 {
+  color: #800080;
+  background-color: #ffff00;
+  font-size: 22px;
+  font-weight: bold;
+  padding: 12px;
+  margin: 16px auto;
+  border-radius: 4px;
+}
+
+/* Pie Chart using pure CSS conic-gradient (no external libraries needed) */
+.pie-chart {
+  width: 260px;
+  height: 260px;
+  margin: 30px auto;
+  border-radius: 50%;
+  background: conic-gradient(
+    #ff3b30 0deg 90deg,     /* Bright Red */
+    #34c759 90deg 180deg,   /* Bright Green */
+    #007aff 180deg 270deg,  /* Bright Blue */
+    #ff9500 270deg 360deg   /* Bright Orange */
+  );
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
