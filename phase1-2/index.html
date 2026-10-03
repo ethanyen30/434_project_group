@@ -44,7 +44,7 @@
 
         <div id="profile" class="tabcontent">
             <h1>Profile</h1>
-            <img src="SmileyFace.png" alt="Smiley Face" width="100" height="100" onclick="document.getElementById('thealert').style.display='block';">
+            <img src="assets/SmileyFace.png" alt="Smiley Face" width="100" height="100" onclick="document.getElementById('thealert').style.display='block';">
             <p><b>Smiley Face</b></p>
             <div id="thealert" class="alert" style="display: none;">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">×</span>
@@ -52,69 +52,59 @@
             </div>
         </div>
 
+        <!--Radio button from https://www.w3schools.com/howto/howto_css_custom_checkbox.asp-->
+        <!-- provides button choices for pizza and cake also gives a drop down for ham and chicken-->
+        <div id="choices" class="tabcontent">
+            <h1>Choices</h1>
+            <p>Food #1:</p>
+            <input type="radio" name="food1" value="Pizza"> 
+            Pizza
+            <input type="radio" name="food1" value="Cake">
+            Cake
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!--Radio button from https://www.w3schools.com/howto/howto_css_custom_checkbox.asp-->
-<!-- provides button choices for pizza and cake also gives a drop down for ham and chicken-->
-<div id="choices" class="tabcontent">
-    <h1>Choices</h1>
-    <p>Food #1:</p>
-    <input type="radio" name="food1" value="Pizza"> 
-    Pizza
-    <input type="radio" name="food1" value="Cake">
-    Cake
-
-    <p>Food #2:</p>
-    <select id="food2">
-        <option value="Ham">Ham</option>
-        <option value="Chicken">Chicken</option>
-    </select>
-    <br><br>
-    <button onclick="displayChoices()">Show Choices</button>
-    <p id="results"></p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            <p>Food #2:</p>
+            <select id="food2">
+                <option value="Ham">Ham</option>
+                <option value="Chicken">Chicken</option>
+            </select>
+            <br><br>
+            <button onclick="displayChoices()">Show Choices</button>
+            <p id="results"></p>
+        </div>
 
         <div id="todo" class="tabcontent">
             <h1>ToDo</h1>
             <input type="text" id="todoInput" placeholder="Enter new task...">
             <button onclick="addTodoItem()">Add Task</button>
-            <ul id="todoList" style="list-style-type: none; padding: 0; margin-top: 20px;"></ul>
+            <ul id="todoList"></ul>
         </div>
-
+        
+        <!-- Images from flaticon.com -->
         <div class="tabs">
-            <button class="tablink" onclick="displayTab('text')" id="defaultOpen">Text</button>
-            <button class="tablink" onclick="displayTab('lr')">LR</button>
-            <button class="tablink" onclick="displayTab('colors')">Colors</button>
-            <button class="tablink" onclick="displayTab('profile')">Profile</button>
-            <button class="tablink" onclick="displayTab('choices')">Choices</button>
-            <button class="tablink" onclick="displayTab('todo')">Todo</button>
+            <button class="tablink" onclick="displayTab('text')" id="defaultOpen">
+                <img src="assets/txt-file.png" alt="" height="50" width="50">
+                Text
+            </button>
+            <button class="tablink" onclick="displayTab('lr')">
+                <img src="assets/down-right-arrow.png" alt="" height="50" width="50">
+                LR
+            </button>
+            <button class="tablink" onclick="displayTab('colors')">
+                <img src="assets/color-palette.png" alt="" height="50" width="50">
+                Colors
+            </button>
+            <button class="tablink" onclick="displayTab('profile')">
+                <img src="assets/user.png" alt="" height="50" width="50">
+                Profile
+            </button>
+            <button class="tablink" onclick="displayTab('choices')">
+                <img src="assets/choice.png" alt="" height="50" width="50">
+                Choices
+            </button>
+            <button class="tablink" onclick="displayTab('todo')">
+                <img src="assets/plan.png" alt="" height="50" width="50">
+                Todo
+            </button>
         </div>
     </div>
 
