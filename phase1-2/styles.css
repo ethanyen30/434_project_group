@@ -11,16 +11,27 @@
     position: absolute;
     bottom: 0;
     width: 100%;
+    height: 80px;
     display: flex;
 }
 
 .tablink {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
   outline: none;
   cursor: pointer;
-  padding: 10px 16px;
+  padding: 4px 8px;
   box-sizing: border-box;
+  background-color: #f0f0f0;
+}
+
+.tablink.active {
+  background-color: #a8a8a8;
 }
 
 .tabcontent {
@@ -56,7 +67,7 @@
 
 #lr {
     position: absolute;
-    inset: 0 0 40px;
+    inset: 0 0 80px;
 }
 
 #lr p {

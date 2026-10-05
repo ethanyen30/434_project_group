@@ -1,5 +1,5 @@
 // Display tab feature adapted from https://www.w3schools.com/howto/howto_js_tab_header.asp
-function displayTab(tabName) {
+function displayTab(tabName, tabButton) {
   // Hide all elements with class="tabcontent" by default */
   let tabcontent = document.getElementsByClassName("tabcontent");
   for (let i = 0; i < tabcontent.length; i++) {
@@ -8,6 +8,12 @@ function displayTab(tabName) {
 
   // Show the specific tab content
   document.getElementById(tabName).style.display = "block";
+
+  let tablinks = document.getElementsByClassName("tablink");
+  for (let i = 0; i < tablinks.length; i++) {
+    tablinks[i].classList.remove("active");
+  }
+  tabButton.classList.add("active");
 
 }
 
