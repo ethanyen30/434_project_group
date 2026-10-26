@@ -1,0 +1,66 @@
+body {
+  margin: 0;
+  font-family: "Quicksand", sans-serif;
+  color: #0b2f64;
+}
+
+.device {
+  margin: auto;
+  width: 640px;
+  height: 960px;
+  overflow: hidden;
+  background-color: #ffdadc;
+  position: relative;
+}
+
+h1 {
+  font-size: 44px;
+  font-weight: 700;
+}
+
+h4 {
+  font-size: 20px;
+  font-weight: 100;
+}
+
+p, li, button {
+  font-size: 38px;
+}
+
+.tabs {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100px;
+  display: flex;
+}
+
+.tablink {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px;
+  font-family: "Quicksand", sans-serif;
+  font-size: 38px;
+  color: #0b2f64;
+  cursor: pointer;
+  background-color: #ffdadc;
+}
+
+.tablink h4 {
+  margin: 0;
+  line-height: 1;
+}
+
+.tablink.active {
+  background-color: #faa7ab;
+}
+
+.tabcontent {
+  display: none;
+  text-align: center;
+}
