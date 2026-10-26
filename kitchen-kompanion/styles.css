@@ -1,38 +1,190 @@
-body {
-  margin: 0;
-  font-family: "Quicksand", sans-serif;
-  color: #0b2f64;
+/* Base Reset & Offline System Typography */
+* {
+  box-sizing: border-box;
 }
 
+body {
+  margin: 0;
+  padding: 20px 0;
+  background-color: #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* 640x960 Target Device Frame */
 .device {
   margin: auto;
   width: 640px;
   height: 960px;
   overflow: hidden;
-  background-color: #ffdadc;
+  background-color: #ffffff;
   position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
 }
 
+/* Base Headings */
 h1 {
-  font-size: 44px;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 16px 0;
+  color: #1a202c;
+}
+
+/* Tab Content Container */
+.tabcontent {
+  display: none;
+  position: absolute;
+  inset: 0 0 100px 0; /* Leaves exactly 100px for bottom nav bar */
+  overflow-y: auto;
+  text-align: center;
+}
+
+/* Tab 1: Inventory View Layout */
+#inventory {
+  inset: 0 0 100px 0;
+  display: none; /* Toggled by script.js */
+  flex-direction: column;
+  padding: 16px;
+  background-color: #f8fafc;
+  text-align: left;
+}
+
+.inv-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 22px;
+  color: #0b2f64;
+}
+
+.inv-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+#invSearch {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 15px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+}
+
+#invSearch:focus {
+  border-color: #0b2f64;
+}
+
+/* Sub-category Filter Tabs */
+.subtabs {
+  display: flex;
+  gap: 6px;
+}
+
+.subtab-btn {
+  flex: 1;
+  padding: 8px 0;
+  font-size: 14px;
+  background-color: #e2e8f0;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.15s ease;
+}
+
+.subtab-btn.active {
+  background-color: #0b2f64;
+  color: #ffffff;
+  border-color: #0b2f64;
+}
+
+/* Compact High-Density Table */
+.inv-table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background-color: #ffffff;
+}
+
+.inv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.inv-table th {
+  background-color: #f1f5f9;
+  color: #0b2f64;
+  text-align: left;
+  padding: 8px 10px;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  border-bottom: 2px solid #cbd5e1;
+  z-index: 1;
+}
+
+.inv-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+}
+
+.inv-table tr:hover {
+  background-color: #f8fafc;
+}
+
+.exp-soon {
+  color: #dc2626;
   font-weight: 700;
 }
 
-h4 {
-  font-size: 20px;
-  font-weight: 100;
+/* Quick-Add Data Entry Row */
+.inv-add-bar {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  align-items: center;
 }
 
-p, li, button {
-  font-size: 38px;
+.inv-add-bar input,
+.inv-add-bar select {
+  padding: 8px;
+  font-size: 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background-color: #ffffff;
+  outline: none;
 }
 
+.btn-add {
+  background-color: #0b2f64;
+  color: #ffffff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.btn-add:hover {
+  background-color: #1e40af;
+}
+
+/* Bottom Navigation Bar */
 .tabs {
   position: absolute;
   bottom: 0;
   width: 100%;
   height: 100px;
   display: flex;
+  background-color: #ffdadc;
+  border-top: 1px solid #f2b4b8;
 }
 
 .tablink {
@@ -43,24 +195,19 @@ p, li, button {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 4px;
-  font-family: "Quicksand", sans-serif;
-  font-size: 38px;
-  color: #0b2f64;
+  padding: 6px 2px;
+  border: none;
   cursor: pointer;
   background-color: #ffdadc;
+  color: #0b2f64;
 }
 
-.tablink h4 {
-  margin: 0;
-  line-height: 1;
+.tablink span {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
 }
 
 .tablink.active {
   background-color: #faa7ab;
-}
-
-.tabcontent {
-  display: none;
-  text-align: center;
 }

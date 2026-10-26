@@ -1,62 +1,102 @@
-// Display tab feature adapted from https://www.w3schools.com/howto/howto_js_tab_header.asp
+// Tab Switching
 function displayTab(tabName, tabButton) {
-  // Hide all elements with class="tabcontent" by default */
-  let tabcontent = document.getElementsByClassName("tabcontent");
-  for (let i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
+  const tabcontents = document.getElementsByClassName("tabcontent");
+  for (let i = 0; i < tabcontents.length; i++) {
+    tabcontents[i].style.display = "none";
   }
 
-  // Show the specific tab content
-  document.getElementById(tabName).style.display = "block";
+  const activeContent = document.getElementById(tabName);
+  if (activeContent) {
+    // Inventory relies on flex layout for table sizing
+    activeContent.style.display = (tabName === "inventory") ? "flex" : "block";
+  }
 
-  let tablinks = document.getElementsByClassName("tablink");
+  const tablinks = document.getElementsByClassName("tablink");
   for (let i = 0; i < tablinks.length; i++) {
     tablinks[i].classList.remove("active");
   }
-  tabButton.classList.add("active");
 
-}
-
-// Get the element with id="defaultOpen" and click on it
-document.getElementById("defaultOpen").click();
-
-
-
-// this displays the choices made in the choices tab
-function displayChoices() {
-  let food1 = document.querySelector('input[name="food1"]:checked');
-  let food2 = document.getElementById("food2").value;
-
-  if (food1) {
-    document.getElementById("results").textContent =
-      "food 1 is  " + food1.value + " and food 2 is  " + food2;
+  if (tabButton) {
+    tabButton.classList.add("active");
   }
 }
 
-function addTodoItem() {
-  let input = document.getElementById("todoInput");
-  let taskText = input.value.trim();
-  if (taskText === "") return;
-  let ul = document.getElementById("todoList");
-  let li = document.createElement("li");
-  li.style.margin = "10px 0";
-  li.style.display = "flex";
-  li.style.justifyContent = "center";
-  li.style.alignItems = "center";
-  li.style.gap = "10px";
-  let span = document.createElement("span");
-  span.textContent = taskText;
-  span.style.cursor = "pointer";
-  span.onclick = function() {
-    span.style.textDecoration = span.style.textDecoration === "line-through" ? "none" : "line-through";
-  };
-  let deleteBtn = document.createElement("button");
-  deleteBtn.textContent = "Delete";
-  deleteBtn.onclick = function() {
-    ul.removeChild(li);
-  };
-  li.appendChild(span);
-  li.appendChild(deleteBtn);
-  ul.appendChild(li);
-  input.value = "";
+// Ensure default tab opens on initial cold-start
+const defaultTabBtn = document.getElementById("defaultOpen");
+if (defaultTabBtn) {
+  defaultTabBtn.click();
+}
+
+// --- Tab 1: Inventory Filtering & Search ---
+let activeLocation = "all";
+
+function filterLocation(loc, btnElement) {
+  activeLocation = loc;
+
+  const subtabs = document.querySelectorAll(".subtab-btn");
+  subtabs.forEach((btn) => btn.classList.remove("active"));
+  btnElement.classList.add("active");
+
+  applyInventoryFilters();
+}
+
+function filterInventory() {
+  applyInventoryFilters();
+}
+
+function applyInventoryFilters() {
+  const query = document.getElementById("invSearch").value.toLowerCase().trim();
+  const rows = document.querySelectorAll("#inventoryList tr");
+
+  rows.forEach((row) => {
+    const rowLoc = row.getAttribute("data-location");
+    const itemName = row.children[0].textContent.toLowerCase();
+
+    const matchesLoc = (activeLocation === "all" || rowLoc === activeLocation);
+    const matchesSearch = itemName.includes(query);
+
+    if (matchesLoc && matchesSearch) {
+      row.style.display = "";
+    } else {
+      row.style.display = "none";
+    }
+  });
+}
+
+// --- Tab 1: Quick-Add Item (Deep Task Data Entry) ---
+function addInventoryRow() {
+  const nameInput = document.getElementById("addName");
+  const locSelect = document.getElementById("addLoc");
+  const qtyInput = document.getElementById("addQty");
+  const expInput = document.getElementById("addExp");
+
+  const name = nameInput.value.trim();
+  const loc = locSelect.value;
+  const qty = qtyInput.value;
+  const exp = expInput.value.trim() || "N/A";
+
+  if (!name) {
+    nameInput.focus();
+    return;
+  }
+
+  const tbody = document.getElementById("inventoryList");
+  const newRow = document.createElement("tr");
+  newRow.setAttribute("data-location", loc);
+  newRow.innerHTML = `
+    <td>${name}</td>
+    <td>${loc}</td>
+    <td>${qty}</td>
+    <td>${exp}</td>
+  `;
+
+  // Prepend to top of table so user immediately sees their entry
+  tbody.prepend(newRow);
+
+  // Clear inputs
+  nameInput.value = "";
+  expInput.value = "";
+  qtyInput.value = "1";
+
+  applyInventoryFilters();
 }
