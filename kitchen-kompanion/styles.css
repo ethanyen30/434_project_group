@@ -322,3 +322,66 @@ h1 {
   font-weight: 600;
   cursor: pointer;
 }
+
+#recipes {
+  padding: 16px;
+  background-color: #f8fafc;
+  text-align: left;
+}
+
+.recipe-header h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #0b2f64;
+}
+
+.recipe-header p {
+  margin: 4px 0 16px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.recipe-controls {
+  margin-bottom: 12px;
+}
+
+#recipeSearch {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 15px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+}
+
+#recipeSearch:focus {
+  border-color: #0b2f64;
+}
+
+.recipe-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.recipe-card {
+  background-color: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.recipe-card h3 {
+  margin: 0 0 4px 0;
+  color: #0b2f64;
+  font-size: 16px;
+}
+
+.recipe-card p {
+  margin: 0;
+  color: #475569;
+  font-size: 13px;
+}

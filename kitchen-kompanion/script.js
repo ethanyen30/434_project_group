@@ -204,3 +204,21 @@ function addMeal() {
 
   document.getElementById("mealName").value = "";
 }
+
+function filterRecipes() {
+  const query = document.getElementById("recipeSearch").value.toLowerCase().trim();
+  const cards = document.querySelectorAll(".recipe-card");
+
+  cards.forEach((card) => {
+    const title = card.querySelector("h3").textContent.toLowerCase();
+    if (title.includes(query)) {
+      card.style.display = "flex";
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+
+function cookRecipe(recipeName) {
+  alert("Cooking " + recipeName + "!");
+}
