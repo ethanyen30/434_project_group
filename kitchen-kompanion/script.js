@@ -100,3 +100,107 @@ function addInventoryRow() {
 
   applyInventoryFilters();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let currentDay = "Monday";
+
+
+//storing meals per day of week
+const mealPlans = {
+  Monday: {
+    breakfast: "",
+    lunch: "",
+    dinner: ""
+  },
+  Tuesday: {
+    breakfast: "",
+    lunch: "",
+    dinner: ""
+  },
+  Wednesday: {
+    breakfast: "",
+    lunch: "",
+    dinner: ""
+  },
+  Thursday: {
+    breakfast: "",
+    lunch: "",
+    dinner: ""
+  },
+  Friday: {
+    breakfast: "",
+    lunch: "",
+    dinner: ""
+  },
+  Saturday: {
+    breakfast: "",
+    lunch: "",
+    dinner: ""
+  },
+  Sunday: {
+    breakfast: "",
+    lunch: "",
+    dinner: ""
+  }
+};
+// swaps day display and meals
+function showDay(day, button) {
+  currentDay = day;
+
+  const buttons = document.querySelectorAll(".day-btn");
+  buttons.forEach((btn) => btn.classList.remove("active"));
+  button.classList.add("active");
+
+  document.getElementById("selectedDay").textContent = day;
+
+  document.querySelector(".meal-card:nth-child(1) p").textContent =
+    mealPlans[day].breakfast || "No meal planned";
+
+  document.querySelector(".meal-card:nth-child(2) p").textContent =
+    mealPlans[day].lunch || "No meal planned";
+
+  document.querySelector(".meal-card:nth-child(3) p").textContent =
+    mealPlans[day].dinner || "No meal planned";
+}
+
+// adds customized meal to prep
+function addMeal() {
+  const mealType = document.getElementById("mealType").value;
+  const mealName = document.getElementById("mealName").value.trim();
+
+  if (!mealName) {
+    document.getElementById("mealName").focus();
+    return;
+  }
+
+  mealPlans[currentDay][mealType] = mealName;
+
+  const cards = document.querySelectorAll(".meal-card");
+
+  if (mealType === "breakfast") {
+    cards[0].querySelector("p").textContent = mealName;
+  }
+
+  if (mealType === "lunch") {
+    cards[1].querySelector("p").textContent = mealName;
+  }
+
+  if (mealType === "dinner") {
+    cards[2].querySelector("p").textContent = mealName;
+  }
+
+  document.getElementById("mealName").value = "";
+}

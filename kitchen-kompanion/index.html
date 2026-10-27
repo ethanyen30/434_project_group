@@ -75,10 +75,64 @@
             <h1>Recipes</h1>
         </div>
 
-        <!-- Tab 4: Meal Prep -->
+
+
+        <!-- Tab 4: Meal Prep-->
         <div id="mealprep" class="tabcontent">
-            <h1>Meal Prep</h1>
+    <div class="meal-header">
+        <h2>Weekly Meal Planner</h2>
+        <p>Plan your meals for the week</p>
+    </div>
+
+
+        <!-- differnt days -->
+    <div class="day-tabs">
+        <button class="day-btn active" onclick="showDay('Monday', this)">Mon</button>
+        <button class="day-btn" onclick="showDay('Tuesday', this)">Tue</button>
+        <button class="day-btn" onclick="showDay('Wednesday', this)">Wed</button>
+        <button class="day-btn" onclick="showDay('Thursday', this)">Thu</button>
+        <button class="day-btn" onclick="showDay('Friday', this)">Fri</button>
+        <button class="day-btn" onclick="showDay('Saturday', this)">Sat</button>
+        <button class="day-btn" onclick="showDay('Sunday', this)">Sun</button>
+    </div>
+
+    <h3 id="selectedDay">Monday</h3>
+
+    <!-- breakfast, lunch, dinner-->
+    <div class="meal-list">
+        <div class="meal-card">
+            <span>Breakfast</span>
+            <p id="Monday-breakfast">No meal planned</p>
         </div>
+
+        <div class="meal-card">
+            <span>Lunch</span>
+            <p id="Monday-lunch">No meal planned</p>
+        </div>
+
+        <div class="meal-card">
+            <span>Dinner</span>
+            <p id="Monday-dinner">No meal planned</p>
+        </div>
+    </div>
+
+    <!-- add meals to meal plan-->
+    <div class="meal-add">
+        <select id="mealType">
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+        </select>
+
+        <input type="text" id="mealName" placeholder="Meal name">
+
+        <button type="button" onclick="addMeal()">+ Add</button>
+    </div>
+</div>
+
+
+
+
         
         <!-- Persistent Bottom Navigation Bar -->
         <div class="tabs">
