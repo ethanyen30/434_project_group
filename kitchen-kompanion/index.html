@@ -67,7 +67,94 @@
 
         <!-- Tab 2: Shopping List -->
         <div id="shoppinglist" class="tabcontent">
-            <h1>Shopping List</h1>
+            <div class="shopping-header">
+                <h2>Shopping List</h2>
+                <p>Keep track of what you need at the store</p>
+            </div>
+
+            <div class="shopping-summary">
+                <span id="shoppingProgress">2 of 7 items in cart</span>
+                <button type="button" onclick="clearPurchasedItems()">Clear purchased</button>
+            </div>
+
+            <div class="shopping-filters">
+                <button type="button" class="shopping-filter active" onclick="filterShoppingList('all', this)">All</button>
+                <button type="button" class="shopping-filter" onclick="filterShoppingList('needed', this)">Needed</button>
+                <button type="button" class="shopping-filter" onclick="filterShoppingList('purchased', this)">In Cart</button>
+            </div>
+
+            <div class="shopping-list" id="shoppingList">
+                <div class="shopping-item" data-status="needed">
+                    <input type="checkbox" onchange="toggleShoppingItem(this)">
+                    <div class="shopping-item-info">
+                        <strong>Bananas</strong>
+                        <span>Produce · Qty 6</span>
+                    </div>
+                    <button type="button" class="shopping-remove" aria-label="Remove Bananas" onclick="removeShoppingItem(this)">×</button>
+                </div>
+                <div class="shopping-item purchased" data-status="purchased">
+                    <input type="checkbox" checked onchange="toggleShoppingItem(this)">
+                    <div class="shopping-item-info">
+                        <strong>Whole Wheat Bread</strong>
+                        <span>Bakery · Qty 1</span>
+                    </div>
+                    <button type="button" class="shopping-remove" aria-label="Remove Whole Wheat Bread" onclick="removeShoppingItem(this)">×</button>
+                </div>
+                <div class="shopping-item" data-status="needed">
+                    <input type="checkbox" onchange="toggleShoppingItem(this)">
+                    <div class="shopping-item-info">
+                        <strong>Tomatoes</strong>
+                        <span>Produce · Qty 4</span>
+                    </div>
+                    <button type="button" class="shopping-remove" aria-label="Remove Tomatoes" onclick="removeShoppingItem(this)">×</button>
+                </div>
+                <div class="shopping-item" data-status="needed">
+                    <input type="checkbox" onchange="toggleShoppingItem(this)">
+                    <div class="shopping-item-info">
+                        <strong>Chicken Thighs</strong>
+                        <span>Meat · Qty 2 lb</span>
+                    </div>
+                    <button type="button" class="shopping-remove" aria-label="Remove Chicken Thighs" onclick="removeShoppingItem(this)">×</button>
+                </div>
+                <div class="shopping-item purchased" data-status="purchased">
+                    <input type="checkbox" checked onchange="toggleShoppingItem(this)">
+                    <div class="shopping-item-info">
+                        <strong>Greek Yogurt</strong>
+                        <span>Dairy · Qty 4</span>
+                    </div>
+                    <button type="button" class="shopping-remove" aria-label="Remove Greek Yogurt" onclick="removeShoppingItem(this)">×</button>
+                </div>
+                <div class="shopping-item" data-status="needed">
+                    <input type="checkbox" onchange="toggleShoppingItem(this)">
+                    <div class="shopping-item-info">
+                        <strong>Black Beans</strong>
+                        <span>Pantry · Qty 2 cans</span>
+                    </div>
+                    <button type="button" class="shopping-remove" aria-label="Remove Black Beans" onclick="removeShoppingItem(this)">×</button>
+                </div>
+                <div class="shopping-item" data-status="needed">
+                    <input type="checkbox" onchange="toggleShoppingItem(this)">
+                    <div class="shopping-item-info">
+                        <strong>Avocados</strong>
+                        <span>Produce · Qty 3</span>
+                    </div>
+                    <button type="button" class="shopping-remove" aria-label="Remove Avocados" onclick="removeShoppingItem(this)">×</button>
+                </div>
+            </div>
+
+            <div class="shopping-add">
+                <input type="text" id="shoppingItemName" placeholder="Item name">
+                <select id="shoppingCategory">
+                    <option value="Produce">Produce</option>
+                    <option value="Dairy">Dairy</option>
+                    <option value="Meat">Meat</option>
+                    <option value="Bakery">Bakery</option>
+                    <option value="Pantry">Pantry</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input type="text" id="shoppingQuantity" value="1" aria-label="Quantity">
+                <button type="button" class="btn-add" onclick="addShoppingItem()">+ Add</button>
+            </div>
         </div>
 
         <!-- Tab 3: Recipes -->
@@ -106,58 +193,57 @@
 
 
 
-        <!-- Tab 4: Meal Prep-->
+        <!-- Tab 4: Meal Prep -->
         <div id="mealprep" class="tabcontent">
-    <div class="meal-header">
-        <h2>Weekly Meal Planner</h2>
-        <p>Plan your meals for the week</p>
-    </div>
+            <div class="meal-header">
+                <h2>Weekly Meal Planner</h2>
+                <p>Plan your meals for the week</p>
+            </div>
 
+            <!-- Different days -->
+            <div class="day-tabs">
+                <button class="day-btn active" onclick="showDay('Monday', this)">Mon</button>
+                <button class="day-btn" onclick="showDay('Tuesday', this)">Tue</button>
+                <button class="day-btn" onclick="showDay('Wednesday', this)">Wed</button>
+                <button class="day-btn" onclick="showDay('Thursday', this)">Thu</button>
+                <button class="day-btn" onclick="showDay('Friday', this)">Fri</button>
+                <button class="day-btn" onclick="showDay('Saturday', this)">Sat</button>
+                <button class="day-btn" onclick="showDay('Sunday', this)">Sun</button>
+            </div>
 
-        <!-- differnt days -->
-    <div class="day-tabs">
-        <button class="day-btn active" onclick="showDay('Monday', this)">Mon</button>
-        <button class="day-btn" onclick="showDay('Tuesday', this)">Tue</button>
-        <button class="day-btn" onclick="showDay('Wednesday', this)">Wed</button>
-        <button class="day-btn" onclick="showDay('Thursday', this)">Thu</button>
-        <button class="day-btn" onclick="showDay('Friday', this)">Fri</button>
-        <button class="day-btn" onclick="showDay('Saturday', this)">Sat</button>
-        <button class="day-btn" onclick="showDay('Sunday', this)">Sun</button>
-    </div>
+            <h3 id="selectedDay">Monday</h3>
 
-    <h3 id="selectedDay">Monday</h3>
+            <!-- Breakfast, lunch, and dinner -->
+            <div class="meal-list">
+                <div class="meal-card">
+                    <span>Breakfast</span>
+                    <p id="Monday-breakfast">No meal planned</p>
+                </div>
 
-    <!-- breakfast, lunch, dinner-->
-    <div class="meal-list">
-        <div class="meal-card">
-            <span>Breakfast</span>
-            <p id="Monday-breakfast">No meal planned</p>
+                <div class="meal-card">
+                    <span>Lunch</span>
+                    <p id="Monday-lunch">No meal planned</p>
+                </div>
+
+                <div class="meal-card">
+                    <span>Dinner</span>
+                    <p id="Monday-dinner">No meal planned</p>
+                </div>
+            </div>
+
+            <!-- Add meals to the meal plan -->
+            <div class="meal-add">
+                <select id="mealType">
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="dinner">Dinner</option>
+                </select>
+
+                <input type="text" id="mealName" placeholder="Meal name">
+
+                <button type="button" onclick="addMeal()">+ Add</button>
+            </div>
         </div>
-
-        <div class="meal-card">
-            <span>Lunch</span>
-            <p id="Monday-lunch">No meal planned</p>
-        </div>
-
-        <div class="meal-card">
-            <span>Dinner</span>
-            <p id="Monday-dinner">No meal planned</p>
-        </div>
-    </div>
-
-    <!-- add meals to meal plan-->
-    <div class="meal-add">
-        <select id="mealType">
-            <option value="breakfast">Breakfast</option>
-            <option value="lunch">Lunch</option>
-            <option value="dinner">Dinner</option>
-        </select>
-
-        <input type="text" id="mealName" placeholder="Meal name">
-
-        <button type="button" onclick="addMeal()">+ Add</button>
-    </div>
-</div>
 
 
 

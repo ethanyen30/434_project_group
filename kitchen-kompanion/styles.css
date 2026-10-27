@@ -176,6 +176,160 @@ h1 {
   background-color: #1e40af;
 }
 
+/* Tab 2: Shopping List */
+#shoppinglist {
+  padding: 16px;
+  background-color: #f8fafc;
+  text-align: left;
+}
+
+.shopping-header h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #0b2f64;
+}
+
+.shopping-header p {
+  margin: 4px 0 14px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.shopping-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #475569;
+  font-size: 14px;
+}
+
+.shopping-summary button {
+  padding: 5px 9px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #0b2f64;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.shopping-filters {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.shopping-filter {
+  flex: 1;
+  padding: 8px 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background-color: #e2e8f0;
+  color: #334155;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.shopping-filter.active {
+  border-color: #0b2f64;
+  background-color: #0b2f64;
+  color: #ffffff;
+}
+
+.shopping-list {
+  max-height: 580px;
+  overflow-y: auto;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background-color: #ffffff;
+}
+
+.shopping-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 68px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.shopping-item:last-child {
+  border-bottom: none;
+}
+
+.shopping-item input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  accent-color: #0b2f64;
+  cursor: pointer;
+}
+
+.shopping-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.shopping-item-info strong {
+  color: #1e293b;
+  font-size: 16px;
+}
+
+.shopping-item-info span {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.shopping-item.purchased .shopping-item-info {
+  opacity: 0.55;
+  text-decoration: line-through;
+}
+
+.shopping-remove {
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 24px;
+}
+
+.shopping-remove:hover {
+  color: #dc2626;
+}
+
+.shopping-add {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.shopping-add input,
+.shopping-add select {
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background-color: #ffffff;
+  font-size: 13px;
+}
+
+#shoppingItemName {
+  flex: 2;
+}
+
+#shoppingCategory {
+  flex: 1.2;
+}
+
+#shoppingQuantity {
+  width: 52px;
+}
+
 /* Bottom Navigation Bar */
 .tabs {
   position: absolute;

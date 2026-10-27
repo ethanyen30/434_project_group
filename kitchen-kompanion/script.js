@@ -115,6 +115,107 @@ function addInventoryRow() {
 
 
 
+// --- Tab 2: Independent Shopping List ---
+let activeShoppingFilter = "all";
+
+function updateShoppingProgress() {
+  const items = document.querySelectorAll("#shoppingList .shopping-item");
+  const purchased = document.querySelectorAll(
+    '#shoppingList .shopping-item[data-status="purchased"]'
+  );
+
+  document.getElementById("shoppingProgress").textContent =
+    `${purchased.length} of ${items.length} items in cart`;
+}
+
+function filterShoppingList(status, button) {
+  activeShoppingFilter = status;
+
+  document.querySelectorAll(".shopping-filter").forEach((filterButton) => {
+    filterButton.classList.remove("active");
+  });
+  button.classList.add("active");
+
+  applyShoppingFilter();
+}
+
+function applyShoppingFilter() {
+  document.querySelectorAll("#shoppingList .shopping-item").forEach((item) => {
+    const matches =
+      activeShoppingFilter === "all" ||
+      item.getAttribute("data-status") === activeShoppingFilter;
+    item.style.display = matches ? "flex" : "none";
+  });
+}
+
+function toggleShoppingItem(checkbox) {
+  const item = checkbox.closest(".shopping-item");
+  const status = checkbox.checked ? "purchased" : "needed";
+
+  item.setAttribute("data-status", status);
+  item.classList.toggle("purchased", checkbox.checked);
+  updateShoppingProgress();
+  applyShoppingFilter();
+}
+
+function removeShoppingItem(button) {
+  button.closest(".shopping-item").remove();
+  updateShoppingProgress();
+}
+
+function clearPurchasedItems() {
+  document
+    .querySelectorAll('#shoppingList .shopping-item[data-status="purchased"]')
+    .forEach((item) => item.remove());
+  updateShoppingProgress();
+}
+
+function addShoppingItem() {
+  const nameInput = document.getElementById("shoppingItemName");
+  const categoryInput = document.getElementById("shoppingCategory");
+  const quantityInput = document.getElementById("shoppingQuantity");
+  const name = nameInput.value.trim();
+  const quantity = quantityInput.value.trim() || "1";
+
+  if (!name) {
+    nameInput.focus();
+    return;
+  }
+
+  const item = document.createElement("div");
+  item.className = "shopping-item";
+  item.setAttribute("data-status", "needed");
+
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.addEventListener("change", () => toggleShoppingItem(checkbox));
+
+  const info = document.createElement("div");
+  info.className = "shopping-item-info";
+
+  const itemName = document.createElement("strong");
+  itemName.textContent = name;
+
+  const details = document.createElement("span");
+  details.textContent = `${categoryInput.value} · Qty ${quantity}`;
+
+  const removeButton = document.createElement("button");
+  removeButton.type = "button";
+  removeButton.className = "shopping-remove";
+  removeButton.textContent = "×";
+  removeButton.setAttribute("aria-label", `Remove ${name}`);
+  removeButton.addEventListener("click", () => removeShoppingItem(removeButton));
+
+  info.append(itemName, details);
+  item.append(checkbox, info, removeButton);
+  document.getElementById("shoppingList").prepend(item);
+
+  nameInput.value = "";
+  quantityInput.value = "1";
+  updateShoppingProgress();
+  applyShoppingFilter();
+}
+
 let currentDay = "Monday";
 
 
