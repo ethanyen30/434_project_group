@@ -1118,7 +1118,69 @@ function showRecipeDetail(recipeId) {
     }
   });
   missingAction.append(addButton, result);
-  detail.append(topBar, columns, missingAction);
+  const scheduleBox = document.createElement("div");
+  scheduleBox.className = "recipe-schedule-box";
+  const scheduleHeading = document.createElement("h4");
+  scheduleHeading.textContent = "Schedule into Weekly Planner";
+  scheduleBox.append(scheduleHeading);
+  const scheduleControls = document.createElement("div");
+  scheduleControls.className = "recipe-schedule-controls";
+  const daySelect = document.createElement("select");
+  daySelect.id = "recipeScheduleDay";
+  daySelect.setAttribute("aria-label", "Select Day");
+  ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].forEach((day) => {
+    const opt = document.createElement("option");
+    opt.value = day;
+    opt.textContent = day;
+    daySelect.append(opt);
+  });
+  const mealSelect = document.createElement("select");
+  mealSelect.id = "recipeScheduleMealType";
+  mealSelect.setAttribute("aria-label", "Select Meal Type");
+  [["breakfast", "Breakfast"], ["lunch", "Lunch"], ["dinner", "Dinner"]].forEach(([val, label]) => {
+    const opt = document.createElement("option");
+    opt.value = val;
+    opt.textContent = label;
+    mealSelect.append(opt);
+  });
+  const scheduleBtn = document.createElement("button");
+  scheduleBtn.type = "button";
+  scheduleBtn.className = "btn-schedule-recipe";
+  scheduleBtn.textContent = "+ Add to Planner";
+  const scheduleStatus = document.createElement("span");
+  scheduleStatus.className = "recipe-schedule-status";
+  scheduleBtn.addEventListener("click", () => {
+    const selectedDay = daySelect.value;
+    const selectedMeal = mealSelect.value;
+    mealPlans[selectedDay][selectedMeal] = recipe.name;
+    const freshStatusItems = recipeInventoryStatus(recipe);
+    const missing = freshStatusItems.filter((ingredient) => !ingredient.have);
+    if (missing.length > 0) {
+      scheduleStatus.className = "recipe-schedule-status warning";
+      scheduleStatus.textContent = `Scheduled for ${selectedDay}! Missing ${missing.length} ingredients.`;
+      showInlineConfirmation(`Add ${missing.length} missing items to Shopping List?`, () => {
+        addMissingIngredients(missing);
+        scheduleStatus.textContent = `Scheduled for ${selectedDay} & missing items added to cart!`;
+      });
+    } else {
+      scheduleStatus.className = "recipe-schedule-status success";
+      scheduleStatus.textContent = `Scheduled for ${selectedDay}! All ingredients are in stock.`;
+    }
+    const shortDayMap = {
+      Monday: "Mon", Tuesday: "Tue", Wednesday: "Wed", 
+      Thursday: "Thu", Friday: "Fri", Saturday: "Sat", Sunday: "Sun"
+    };
+    const targetShortLabel = shortDayMap[currentDay];
+    const dayButtons = document.querySelectorAll(".day-btn");
+    const activeDayBtn = Array.from(dayButtons).find(btn => btn.textContent.trim() === currentDay);
+    if (activeDayBtn) {
+      showDay(currentDay, activeDayBtn);
+    }
+  });
+  scheduleControls.append(daySelect, mealSelect, scheduleBtn);
+  scheduleBox.append(scheduleControls, scheduleStatus);
+
+  detail.append(topBar, columns, missingAction, scheduleBox);
 }
 
 function showRecipeList() {
