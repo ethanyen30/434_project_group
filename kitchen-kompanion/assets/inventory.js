@@ -1,0 +1,23 @@
+const INVENTORY = [
+  { id: "whole-milk", name: "Whole Milk", qty: 0.5, unit: "gal", step: 0.25, location: "Fridge", category: "Dairy", expires: "2026-11-03" },
+  { id: "large-eggs", name: "Large Eggs", qty: 10, unit: "count", step: 1, location: "Fridge", category: "Dairy", expires: "2026-11-08" },
+  { id: "cheddar-cheese", name: "Cheddar Cheese", qty: 8, unit: "oz", step: 1, location: "Fridge", category: "Dairy", expires: "2026-11-15" },
+  { id: "spinach", name: "Spinach", qty: 1, unit: "bag", step: 1, location: "Fridge", category: "Produce", expires: "2026-11-06" },
+  { id: "tomato", name: "Tomato", qty: 4, unit: "count", step: 1, location: "Fridge", category: "Produce", expires: "2026-11-12" },
+  { id: "bread", name: "Bread", qty: 14, unit: "slices", step: 1, location: "Fridge", category: "Bakery", expires: "2026-11-10" },
+  { id: "pasta-penne", name: "Pasta (Penne)", qty: 48, unit: "oz", step: 1, location: "Cabinet", category: "Pantry", expires: "2026-12-20" },
+  { id: "black-beans", name: "Canned Black Beans", qty: 4, unit: "can", step: 1, location: "Cabinet", category: "Pantry", expires: "2027-01-15" },
+  { id: "olive-oil", name: "Olive Oil", qty: 50, unit: "tbsp", step: 1, location: "Cabinet", category: "Pantry", expires: "2027-03-01" },
+  { id: "jasmine-rice", name: "Jasmine Rice", qty: 5, unit: "cup", step: 0.25, location: "Cabinet", category: "Pantry", expires: "2027-02-10" },
+  { id: "tomato-sauce", name: "Tomato Sauce", qty: 48, unit: "oz", step: 1, location: "Cabinet", category: "Pantry", expires: "2027-01-05" },
+  { id: "chicken-breasts", name: "Chicken Breasts", qty: 6, unit: "lb", step: 0.5, location: "Freezer", category: "Meat", expires: "2026-11-30" },
+  { id: "ground-beef", name: "Ground Beef", qty: 2, unit: "lb", step: 0.5, location: "Freezer", category: "Meat", expires: "2026-12-05" },
+  { id: "broccoli", name: "Broccoli", qty: 4, unit: "cup", step: 0.25, location: "Fridge", category: "Produce", expires: "2026-11-07" },
+  { id: "bell-pepper", name: "Bell Pepper", qty: 3, unit: "count", step: 1, location: "Fridge", category: "Produce", expires: "2026-11-09" },
+  { id: "onion", name: "Onion", qty: 4, unit: "count", step: 0.5, location: "Cabinet", category: "Produce", expires: "2026-11-18" },
+  { id: "garlic", name: "Garlic", qty: 12, unit: "clove", step: 1, location: "Cabinet", category: "Produce", expires: "2026-11-20" },
+  { id: "parmesan", name: "Parmesan", qty: 4, unit: "oz", step: 1, location: "Fridge", category: "Dairy", expires: "2026-11-14" },
+  { id: "heavy-cream", name: "Heavy Cream", qty: 1, unit: "cup", step: 0.25, location: "Fridge", category: "Dairy", expires: "2026-11-11" },
+  { id: "corn-tortillas", name: "Corn Tortillas", qty: 6, unit: "count", step: 1, location: "Fridge", category: "Bakery", expires: "2026-11-13" },
+  { id: "tamari", name: "Tamari", qty: 12, unit: "tbsp", step: 1, location: "Cabinet", category: "Pantry", expires: "2027-02-01" }
+];
