@@ -42,15 +42,15 @@
 
             <!-- Compact Quick-Add Row (Data Entry) -->
             <div class="inv-add-bar">
-                <input type="text" id="addName" placeholder="Item name" style="flex: 2;">
-                <select id="addLoc" style="flex: 1.2;">
+                <input type="text" id="addName" placeholder="Item name">
+                <select id="addLoc">
                     <option value="Fridge">Fridge</option>
                     <option value="Cabinet">Cabinet</option>
                     <option value="Freezer">Freezer</option>
                 </select>
-                <input type="number" id="addQty" value="1" min="0" step="0.25" style="width: 64px;">
+                <input type="number" id="addQty" value="1" min="0" step="0.25">
                 <select id="addUnit" aria-label="Inventory unit">
-                    <option value="count">count</option>
+                    <option value="count">unit</option>
                     <option value="slices">slices</option>
                     <option value="oz">oz</option>
                     <option value="lb">lb</option>
@@ -64,7 +64,8 @@
                     <option value="tbsp">tbsp</option>
                     <option value="tsp">tsp</option>
                 </select>
-                <input type="date" id="addExp" value="2026-11-12" aria-label="Expiration date">
+                <input type="text" id="addExp" value="11/12/2026" placeholder="MM/DD/YYYY"
+                    aria-label="Expiration date" inputmode="numeric">
                 <button type="button" class="btn-add" onclick="addInventoryRow()">+ Add</button>
             </div>
         </div>
@@ -90,7 +91,7 @@
 
             <div class="shopping-summary">
                 <span id="shoppingProgress">0 of 0 items in cart</span>
-                <button type="button" onclick="clearPurchasedItems()">Clear purchased</button>
+                <button type="button" onclick="showShoppingReceipt()">Done shopping</button>
             </div>
 
             <div class="shopping-filters">
@@ -114,7 +115,7 @@
                 </select>
                 <input type="number" id="shoppingQuantity" value="1" min="1" step="0.25" aria-label="Quantity">
                 <select id="shoppingUnit" aria-label="Shopping unit">
-                    <option value="count">count</option>
+                    <option value="count">unit</option>
                     <option value="slices">slices</option>
                     <option value="oz">oz</option>
                     <option value="lb">lb</option>
@@ -136,9 +137,7 @@
         <div id="recipes" class="tabcontent">
             <div class="recipe-header">
                 <h2><u>Recipe Collection</u></h2>
-                <div class="recipe-controls">
-                    <input type="text" id="recipeSearch" placeholder="Search recipes..." onkeyup="filterRecipes()">
-                </div>
+                <button type="button" class="recipe-preferences-button" onclick="showAddRecipeModal()">+ Add recipe</button>
                 <button type="button" class="recipe-preferences-button" onclick="toggleRecipePreferences()">⚙ My Preferences</button>
             </div>
             <div id="recipePreferences" class="recipe-preferences" hidden></div>

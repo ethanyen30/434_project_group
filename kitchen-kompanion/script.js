@@ -81,6 +81,19 @@ function renderInventory() {
 
   inventory.forEach((inventoryItem) => {
     const row = document.createElement("tr");
+    row.tabIndex = 0;
+    row.setAttribute("aria-label", `Edit ${inventoryItem.name}`);
+    row.addEventListener("click", (event) => {
+      if (!event.target.closest("button")) {
+        showInventoryEditModal(inventoryItem);
+      }
+    });
+    row.addEventListener("keydown", (event) => {
+      if ((event.key === "Enter" || event.key === " ") && !event.target.closest("button")) {
+        event.preventDefault();
+        showInventoryEditModal(inventoryItem);
+      }
+    });
     row.dataset.location = inventoryItem.location;
     row.dataset.inventoryId = inventoryItem.id;
 
@@ -90,7 +103,7 @@ function renderInventory() {
     locationCell.textContent = locationAbbreviations[inventoryItem.location] || inventoryItem.location;
     const expirationCell = document.createElement("td");
     expirationCell.textContent = formatExpiration(inventoryItem.expires);
-    const expires = new Date(`${inventoryItem.expires}T00:00:00`);
+    const expires = parseStoredDate(inventoryItem.expires);
     const daysUntilExpiration = Math.ceil((expires - TODAY) / 86400000);
     if (expires < TODAY) {
       expirationCell.className = "expired";
@@ -117,15 +130,172 @@ function renderInventory() {
   });
 }
 
+function showInventoryEditModal(inventoryItem) {
+  if (document.getElementById("inventoryEditModal")) {
+    return;
+  }
+
+  const modal = document.createElement("div");
+  modal.id = "inventoryEditModal";
+  modal.className = "inventory-edit-modal";
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-modal", "true");
+  modal.setAttribute("aria-labelledby", "inventoryEditModalTitle");
+
+  const panel = document.createElement("form");
+  panel.className = "inventory-edit-modal-panel";
+  panel.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(panel);
+    const name = formData.get("name").trim();
+    const quantity = Number(formData.get("quantity"));
+    const step = Number(formData.get("step"));
+    const expires = normalizeDateInput(formData.get("expires"));
+    const error = panel.querySelector(".inventory-edit-error");
+
+    if (!name || !Number.isFinite(quantity) || quantity < 0 ||
+      !Number.isFinite(step) || step <= 0 || !expires) {
+      error.textContent = "Enter a name, valid non-negative quantity, positive step, and date in MM/DD/YYYY format.";
+      return;
+    }
+
+    inventoryItem.name = name;
+    inventoryItem.location = formData.get("location");
+    inventoryItem.qty = quantity;
+    inventoryItem.unit = formData.get("unit");
+    inventoryItem.step = step;
+    inventoryItem.category = formData.get("category");
+    inventoryItem.expires = expires;
+    modal.remove();
+    renderInventory();
+    applyInventoryFilters();
+    updateShoppingInventoryStatuses();
+  });
+
+  const title = document.createElement("h3");
+  title.id = "inventoryEditModalTitle";
+  title.textContent = `Edit ${inventoryItem.name}`;
+
+  const fields = [
+    ["name", "Item name", "text", inventoryItem.name],
+    ["quantity", "Quantity", "number", inventoryItem.qty],
+    ["step", "Quantity step", "number", inventoryItem.step]
+  ];
+  fields.forEach(([name, labelText, type, value]) => {
+    const label = document.createElement("label");
+    label.textContent = labelText;
+    const input = document.createElement("input");
+    input.name = name;
+    input.type = type;
+    input.value = value;
+    input.required = true;
+    if (name === "quantity") {
+      input.min = "0";
+      input.step = "0.01";
+    } else if (name === "step") {
+      input.min = "0.01";
+      input.step = "0.01";
+    }
+    label.append(input);
+    panel.append(label);
+  });
+
+  const selectFields = [
+    ["location", "Location", ["Fridge", "Cabinet", "Freezer"], inventoryItem.location],
+    ["unit", "Unit", ["count", "slices", "oz", "lb", "gal", "cup", "can", "box", "bottle", "bag", "clove", "tbsp", "tsp"], inventoryItem.unit],
+    ["category", "Category", ["Produce", "Dairy", "Meat", "Bakery", "Pantry", "Other"], inventoryItem.category]
+  ];
+  selectFields.forEach(([name, labelText, options, selected]) => {
+    const label = document.createElement("label");
+    label.textContent = labelText;
+    const select = document.createElement("select");
+    select.name = name;
+    select.required = true;
+    options.forEach((optionValue) => {
+      const option = document.createElement("option");
+      option.value = optionValue;
+      option.textContent = unitLabel(optionValue);
+      option.selected = optionValue === selected;
+      select.append(option);
+    });
+    label.append(select);
+    panel.append(label);
+  });
+
+  const expirationLabel = document.createElement("label");
+  expirationLabel.textContent = "Expiration date";
+  const expirationInput = document.createElement("input");
+  expirationInput.name = "expires";
+  expirationInput.type = "text";
+  expirationInput.value = formatDateInput(inventoryItem.expires);
+  expirationInput.placeholder = "MM/DD/YYYY";
+  expirationInput.inputMode = "numeric";
+  expirationInput.required = true;
+  expirationLabel.append(expirationInput);
+  panel.append(expirationLabel);
+
+  const error = document.createElement("p");
+  error.className = "inventory-edit-error";
+  error.setAttribute("role", "alert");
+  panel.append(error);
+
+  const actions = document.createElement("div");
+  actions.className = "inventory-edit-modal-actions";
+  const cancelButton = document.createElement("button");
+  cancelButton.type = "button";
+  cancelButton.textContent = "Cancel";
+  cancelButton.addEventListener("click", () => modal.remove());
+  const saveButton = document.createElement("button");
+  saveButton.type = "submit";
+  saveButton.className = "btn-add";
+  saveButton.textContent = "Save changes";
+  actions.append(cancelButton, saveButton);
+  panel.prepend(title);
+  panel.append(actions);
+  modal.append(panel);
+  document.querySelector(".device").append(modal);
+  panel.querySelector('[name="name"]').focus();
+}
+
 function formatQuantity(quantity) {
   return Number(quantity.toFixed(2)).toString();
 }
 
+function unitLabel(unit) {
+  return unit === "count" ? "unit" : unit;
+}
+
 function formatExpiration(dateString) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "numeric",
-    day: "numeric"
-  }).format(new Date(`${dateString}T00:00:00`));
+  const [year, month, day] = dateString.split("-");
+  return `${month}/${day}`;
+}
+
+function parseStoredDate(dateString) {
+  const [year, month, day] = dateString.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function formatDateInput(dateString) {
+  const [year, month, day] = dateString.split("-").map(Number);
+  return `${String(month).padStart(2, "0")}/${String(day).padStart(2, "0")}/${year}`;
+}
+
+function normalizeDateInput(value) {
+  if (typeof value !== "string") {
+    return null;
+  }
+  const match = value.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!match) {
+    return null;
+  }
+  const month = Number(match[1]);
+  const day = Number(match[2]);
+  const year = Number(match[3]);
+  const date = new Date(year, month - 1, day);
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+    return null;
+  }
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
 function updateShoppingInventoryStatus(item) {
@@ -141,7 +311,7 @@ function updateShoppingInventoryStatus(item) {
   );
 
   if (inventoryItem) {
-    status.textContent = `In inventory: ${formatQuantity(inventoryItem.qty)} ${inventoryItem.unit}`;
+    status.textContent = `In inventory: ${formatQuantity(inventoryItem.qty)} ${unitLabel(inventoryItem.unit)}`;
     status.className = "shopping-inventory-status in-inventory";
   } else {
     status.textContent = "Not in inventory";
@@ -172,7 +342,7 @@ function createQuantityStepper(quantity, unit, step, minimum, onChange, onAtMini
 
   const value = document.createElement("span");
   value.className = "quantity-value";
-  value.textContent = `${formatQuantity(quantity)} ${unit}`;
+  value.textContent = `${formatQuantity(quantity)} ${unitLabel(unit)}`;
   if (quantity === 0) {
     value.classList.add("zero-quantity");
   }
@@ -277,12 +447,19 @@ function addInventoryRow() {
   const loc = locSelect.value;
   const qty = Math.max(0, Number(qtyInput.value) || 0);
   const unit = unitInput.value;
-  const expires = expInput.value || "2026-11-12";
+  const expires = normalizeDateInput(expInput.value);
 
   if (!name) {
     nameInput.focus();
     return;
   }
+  if (!expires) {
+    expInput.setCustomValidity("Use MM/DD/YYYY.");
+    expInput.reportValidity();
+    expInput.focus();
+    return;
+  }
+  expInput.setCustomValidity("");
 
   inventory.unshift({
     id: `inventory-${Date.now()}`,
@@ -364,42 +541,141 @@ function removeShoppingItem(button) {
   updateShoppingProgress();
 }
 
-function clearPurchasedItems() {
+function showShoppingReceipt() {
+  if (document.getElementById("shoppingReceiptModal")) {
+    return;
+  }
+
   const purchasedItems = Array.from(
     document.querySelectorAll('#shoppingList .shopping-item[data-status="purchased"]')
-  );
+  ).map((item) => ({
+    element: item,
+    name: item.querySelector(".shopping-item-info strong").textContent.trim(),
+    quantity: Number(item.dataset.qty),
+    unit: item.dataset.unit
+  }));
 
-  purchasedItems.forEach((item) => {
-    const name = item.querySelector(".shopping-item-info strong").textContent.trim();
-    const quantity = Number(item.dataset.qty);
-    const unit = item.dataset.unit;
-    const existing = inventory.find((inventoryItem) =>
-      normalizedName(inventoryItem.name) === normalizedName(name) &&
-      inventoryItem.unit === unit
-    );
+  if (!purchasedItems.length) {
+    showSavedListMessage("Mark purchased items before finishing shopping.", true);
+    return;
+  }
 
-    if (existing) {
-      existing.qty = Number((existing.qty + quantity).toFixed(2));
-    } else {
-      inventory.unshift({
-        id: `inventory-${Date.now()}-${purchasedItems.indexOf(item)}`,
-        name,
-        qty: quantity,
-        unit,
-        step: unit === "gal" ? 0.25 : unit === "lb" ? 0.5 : 1,
-        location: "Fridge",
-        category: "Other",
-        expires: "2026-11-12"
-      });
+  const modal = document.createElement("div");
+  modal.id = "shoppingReceiptModal";
+  modal.className = "shopping-receipt-modal";
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-modal", "true");
+  modal.setAttribute("aria-labelledby", "shoppingReceiptTitle");
+
+  const panel = document.createElement("form");
+  panel.className = "shopping-receipt-panel";
+  panel.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const receiptRows = Array.from(panel.querySelectorAll(".receipt-item"));
+    const invalidRow = receiptRows.find((row) => {
+      const input = row.querySelector("[name='expires']");
+      const normalizedDate = normalizeDateInput(input.value);
+      if (normalizedDate) {
+        input.dataset.normalizedDate = normalizedDate;
+      }
+      return !row.querySelector("[name='location']").value || !normalizedDate;
+    });
+    if (invalidRow) {
+      invalidRow.querySelector("[name='expires']").focus();
+      return;
     }
 
-    item.remove();
+    purchasedItems.forEach((purchasedItem, index) => {
+      const row = receiptRows[index];
+      const location = row.querySelector("[name='location']").value;
+      const expires = row.querySelector("[name='expires']").dataset.normalizedDate;
+      const existing = inventory.find((inventoryItem) =>
+        normalizedName(inventoryItem.name) === normalizedName(purchasedItem.name) &&
+        inventoryItem.unit === purchasedItem.unit
+      );
+
+      if (existing) {
+        existing.qty = Number((existing.qty + purchasedItem.quantity).toFixed(2));
+        existing.location = location;
+        existing.expires = expires;
+      } else {
+        inventory.unshift({
+          id: `inventory-${Date.now()}-${index}`,
+          name: purchasedItem.name,
+          qty: purchasedItem.quantity,
+          unit: purchasedItem.unit,
+          step: purchasedItem.unit === "gal" ? 0.25 : purchasedItem.unit === "lb" ? 0.5 : 1,
+          location,
+          category: "Other",
+          expires
+        });
+      }
+      purchasedItem.element.remove();
+    });
+
+    modal.remove();
+    renderInventory();
+    applyInventoryFilters();
+    updateShoppingInventoryStatuses();
+    updateShoppingProgress();
   });
 
-  renderInventory();
-  applyInventoryFilters();
-  updateShoppingInventoryStatuses();
-  updateShoppingProgress();
+  const title = document.createElement("h3");
+  title.id = "shoppingReceiptTitle";
+  title.textContent = "Shopping receipt";
+  const intro = document.createElement("p");
+  intro.textContent = "Choose where each purchased item goes and its expiration date.";
+  panel.append(title, intro);
+
+  purchasedItems.forEach((purchasedItem) => {
+    const row = document.createElement("div");
+    row.className = "receipt-item";
+    const itemHeading = document.createElement("strong");
+    itemHeading.textContent =
+      `${purchasedItem.name} — ${formatQuantity(purchasedItem.quantity)} ${unitLabel(purchasedItem.unit)}`;
+    row.append(itemHeading);
+
+    const locationLabel = document.createElement("label");
+    locationLabel.textContent = "Location";
+    const locationSelect = document.createElement("select");
+    locationSelect.name = "location";
+    ["Fridge", "Cabinet", "Freezer"].forEach((location) => {
+      const option = document.createElement("option");
+      option.value = location;
+      option.textContent = location;
+      locationSelect.append(option);
+    });
+    locationLabel.append(locationSelect);
+
+    const expiresLabel = document.createElement("label");
+    expiresLabel.textContent = "Expiration date";
+    const expiresInput = document.createElement("input");
+    expiresInput.name = "expires";
+    expiresInput.type = "text";
+    expiresInput.value = "11/12/2026";
+    expiresInput.placeholder = "MM/DD/YYYY";
+    expiresInput.inputMode = "numeric";
+    expiresInput.required = true;
+    expiresLabel.append(expiresInput);
+    row.append(locationLabel, expiresLabel);
+    panel.append(row);
+  });
+
+  const actions = document.createElement("div");
+  actions.className = "shopping-receipt-actions";
+  const cancelButton = document.createElement("button");
+  cancelButton.type = "button";
+  cancelButton.textContent = "Cancel";
+  cancelButton.addEventListener("click", () => modal.remove());
+  const finishButton = document.createElement("button");
+  finishButton.type = "submit";
+  finishButton.className = "btn-add";
+  finishButton.textContent = "Add to inventory";
+  actions.append(cancelButton, finishButton);
+  panel.append(actions);
+  modal.append(panel);
+  document.querySelector(".device").append(modal);
+  cancelButton.focus();
 }
 
 function addShoppingItem() {
@@ -843,8 +1119,6 @@ function recipeInventoryStatus(recipe) {
 }
 
 function recipeMatchesFilters(recipe, ignoreAllergies = false) {
-  const query = document.getElementById("recipeSearch").value.toLowerCase().trim();
-  const searchMatch = `${recipe.name} ${recipe.tags.join(" ")}`.toLowerCase().includes(query);
   const tagMatch = Object.entries(recipeFilters).every(([filter, enabled]) => {
     if (!enabled) return true;
     if (filter === "not-spicy") return !recipe.tags.includes("spicy");
@@ -855,31 +1129,52 @@ function recipeMatchesFilters(recipe, ignoreAllergies = false) {
     recipe.tags.includes("vegetarian");
   const allergyMatch = ignoreAllergies || !recipePreferences.hideAllergens ||
     !recipe.allergens.some((allergen) => recipePreferences.allergies.includes(allergen));
-  return searchMatch && tagMatch && dietMatch && allergyMatch;
+  return tagMatch && dietMatch && allergyMatch;
 }
 
 function renderRecipeFilters() {
   const container = document.getElementById("recipeFilters");
   container.replaceChildren();
-  [
+  const filterOptions = [
     ["vegetarian", "Vegetarian"],
     ["gluten-free", "Gluten-free"],
     ["dairy-free", "Dairy-free"],
     ["not-spicy", "Not spicy"],
     ["favorites", "Favorites"]
-  ].forEach(([key, label]) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "recipe-filter-chip";
-    button.textContent = label;
-    button.classList.toggle("active", recipeFilters[key]);
-    button.addEventListener("click", () => {
-      recipeFilters[key] = !recipeFilters[key];
-      renderRecipeFilters();
+  ];
+  const dropdown = document.createElement("details");
+  dropdown.className = "recipe-filter-dropdown";
+  const summary = document.createElement("summary");
+  summary.textContent = "Filter recipes";
+  const options = document.createElement("div");
+  options.className = "recipe-filter-options";
+  filterOptions.forEach(([key, label]) => {
+    const optionLabel = document.createElement("label");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.value = key;
+    checkbox.checked = recipeFilters[key];
+    checkbox.addEventListener("change", () => {
+      recipeFilters[key] = checkbox.checked;
+      const selectedLabels = filterOptions
+        .filter(([filterKey]) => recipeFilters[filterKey])
+        .map(([, filterLabel]) => filterLabel);
+      summary.textContent = selectedLabels.length
+        ? `Filters: ${selectedLabels.join(", ")}`
+        : "Filter recipes";
       renderRecipes();
     });
-    container.append(button);
+    optionLabel.append(checkbox, label);
+    options.append(optionLabel);
   });
+  const selectedLabels = filterOptions
+    .filter(([key]) => recipeFilters[key])
+    .map(([, label]) => label);
+  summary.textContent = selectedLabels.length
+    ? `Filters: ${selectedLabels.join(", ")}`
+    : "Filter recipes";
+  dropdown.append(summary, options);
+  container.append(dropdown);
 }
 
 function renderRecipePreferences() {
@@ -950,6 +1245,259 @@ function toggleRecipePreferences() {
   if (!panel.hidden) renderRecipePreferences();
 }
 
+function showAddRecipeModal() {
+  if (document.getElementById("addRecipeModal")) {
+    return;
+  }
+
+  const modal = document.createElement("div");
+  modal.id = "addRecipeModal";
+  modal.className = "add-recipe-modal";
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-modal", "true");
+  modal.setAttribute("aria-labelledby", "addRecipeTitle");
+
+  const panel = document.createElement("form");
+  panel.className = "add-recipe-panel";
+  panel.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(panel);
+    const ingredientRows = Array.from(panel.querySelectorAll(".new-recipe-ingredient"));
+    const stepInputs = Array.from(panel.querySelectorAll("[name='step']"));
+    const ingredients = ingredientRows.map((row) => ({
+      name: row.querySelector("[name='ingredientName']").value.trim(),
+      qty: Number(row.querySelector("[name='ingredientQty']").value),
+      unit: row.querySelector("[name='ingredientUnit']").value
+    }));
+    const error = panel.querySelector(".add-recipe-error");
+    const cookMins = Number(formData.get("cookMins"));
+    const servings = Number(formData.get("servings"));
+    const steps = stepInputs.map((input) => input.value.trim()).filter(Boolean);
+
+    if (!formData.get("name").trim() || !Number.isFinite(cookMins) || cookMins <= 0 ||
+      !Number.isFinite(servings) || servings <= 0 || !ingredients.length ||
+      ingredients.some((ingredient) =>
+        !ingredient.name || !Number.isFinite(ingredient.qty) || ingredient.qty <= 0
+      ) || !steps.length) {
+      error.textContent = "Enter all recipe details, at least one ingredient with a positive quantity, and one step.";
+      return;
+    }
+
+    const recipe = {
+      id: `custom-${Date.now()}`,
+      name: formData.get("name").trim(),
+      prepMins: 0,
+      cookMins,
+      difficulty: formData.get("difficulty"),
+      servings,
+      tags: [],
+      allergens: [],
+      ingredients,
+      steps
+    };
+    recipes.push(recipe);
+    if (formData.get("addMissingIngredients") === "on") {
+      addMissingIngredients(recipeInventoryStatus(recipe)
+        .filter((ingredient) => !ingredient.have));
+    }
+    if (formData.get("saveIngredients") === "on") {
+      const savedLists = getSavedLists();
+      const savedList = {
+        name: recipe.name,
+        type: "recipe",
+        items: recipe.ingredients.map((ingredient) => ({ ...ingredient }))
+      };
+      const existingIndex = savedLists.findIndex(
+        (list) => list.name.toLowerCase() === recipe.name.toLowerCase()
+      );
+      if (existingIndex >= 0) {
+        savedLists[existingIndex] = savedList;
+      } else {
+        savedLists.push(savedList);
+      }
+      saveSavedLists(savedLists);
+      renderSavedListOptions(recipe.name);
+    }
+    modal.remove();
+    renderRecipes();
+  });
+
+  const title = document.createElement("h3");
+  title.id = "addRecipeTitle";
+  title.textContent = "Add your recipe";
+  panel.append(title);
+
+  const fields = [
+    ["name", "Recipe name", "text", "Recipe name"],
+    ["cookMins", "Time to cook (minutes)", "number", "60"],
+    ["servings", "Serves", "number", "4"]
+  ];
+  fields.forEach(([name, labelText, type, placeholder]) => {
+    const label = document.createElement("label");
+    label.textContent = labelText;
+    const input = document.createElement("input");
+    input.name = name;
+    input.type = type;
+    input.placeholder = placeholder;
+    input.required = true;
+    if (type === "number") {
+      input.min = "1";
+      input.step = "1";
+    }
+    label.append(input);
+    panel.append(label);
+  });
+
+  const difficultyLabel = document.createElement("label");
+  difficultyLabel.textContent = "Difficulty";
+  const difficulty = document.createElement("select");
+  difficulty.name = "difficulty";
+  ["Easy", "Medium", "Hard"].forEach((value) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    difficulty.append(option);
+  });
+  difficultyLabel.append(difficulty);
+  panel.append(difficultyLabel);
+
+  const ingredientsHeading = document.createElement("h4");
+  ingredientsHeading.textContent = "Ingredients";
+  const ingredientsList = document.createElement("div");
+  ingredientsList.className = "new-recipe-list";
+  const addIngredientButton = document.createElement("button");
+  addIngredientButton.type = "button";
+  addIngredientButton.className = "new-recipe-secondary-button";
+  addIngredientButton.textContent = "+ Add ingredient";
+  addIngredientButton.addEventListener("click", () => {
+    ingredientsList.append(createNewIngredientRow());
+  });
+  panel.append(ingredientsHeading, ingredientsList, addIngredientButton);
+  ingredientsList.append(createNewIngredientRow());
+
+  const stepsHeading = document.createElement("h4");
+  stepsHeading.textContent = "Steps";
+  const stepsList = document.createElement("div");
+  stepsList.className = "new-recipe-list";
+  const addStepButton = document.createElement("button");
+  addStepButton.type = "button";
+  addStepButton.className = "new-recipe-secondary-button";
+  addStepButton.textContent = "+ Add step";
+  addStepButton.addEventListener("click", () => {
+    stepsList.append(createNewStepInput());
+    updateStepNumbers(stepsList);
+  });
+  panel.append(stepsHeading, stepsList, addStepButton);
+  stepsList.append(createNewStepInput());
+  updateStepNumbers(stepsList);
+
+  const error = document.createElement("p");
+  error.className = "add-recipe-error";
+  error.setAttribute("role", "alert");
+  panel.append(error);
+
+  const options = document.createElement("div");
+  options.className = "add-recipe-options";
+  [
+    ["addMissingIngredients", "Add missing ingredients to shopping list"],
+    ["saveIngredients", "Save recipe ingredients as a shopping list"]
+  ].forEach(([name, text]) => {
+    const label = document.createElement("label");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.name = name;
+    label.append(checkbox, text);
+    options.append(label);
+  });
+  panel.append(options);
+
+  const actions = document.createElement("div");
+  actions.className = "add-recipe-actions";
+  const cancelButton = document.createElement("button");
+  cancelButton.type = "button";
+  cancelButton.textContent = "Cancel";
+  cancelButton.addEventListener("click", () => modal.remove());
+  const saveButton = document.createElement("button");
+  saveButton.type = "submit";
+  saveButton.className = "btn-add";
+  saveButton.textContent = "Finish";
+  actions.append(cancelButton, saveButton);
+  panel.append(actions);
+  modal.append(panel);
+  document.querySelector(".device").append(modal);
+  panel.querySelector("[name='name']").focus();
+}
+
+function createNewIngredientRow() {
+  const row = document.createElement("div");
+  row.className = "new-recipe-ingredient";
+  const nameInput = document.createElement("input");
+  nameInput.name = "ingredientName";
+  nameInput.type = "text";
+  nameInput.placeholder = "Ingredient name";
+  nameInput.required = true;
+  const quantityInput = document.createElement("input");
+  quantityInput.name = "ingredientQty";
+  quantityInput.type = "number";
+  quantityInput.min = "0.01";
+  quantityInput.step = "0.01";
+  quantityInput.placeholder = "Qty";
+  quantityInput.required = true;
+  const unitSelect = document.createElement("select");
+  unitSelect.name = "ingredientUnit";
+  ["count", "slices", "oz", "lb", "gal", "cup", "can", "box", "bottle", "bag", "clove", "tbsp", "tsp"]
+    .forEach((unit) => {
+      const option = document.createElement("option");
+      option.value = unit;
+      option.textContent = unitLabel(unit);
+      unitSelect.append(option);
+    });
+  nameInput.addEventListener("input", () => {
+    const matchingItem = inventory.find((item) =>
+      normalizedName(item.name) === normalizedName(nameInput.value)
+    );
+    unitSelect.disabled = Boolean(matchingItem);
+    if (matchingItem) {
+      unitSelect.value = matchingItem.unit;
+    }
+  });
+  const removeButton = document.createElement("button");
+  removeButton.type = "button";
+  removeButton.className = "new-recipe-remove-button";
+  removeButton.textContent = "Remove";
+  removeButton.addEventListener("click", () => row.remove());
+  row.append(nameInput, quantityInput, unitSelect, removeButton);
+  return row;
+}
+
+function createNewStepInput() {
+  const row = document.createElement("div");
+  row.className = "new-recipe-step";
+  const number = document.createElement("span");
+  number.className = "new-recipe-step-number";
+  const input = document.createElement("input");
+  input.name = "step";
+  input.type = "text";
+  input.placeholder = "Describe this step";
+  input.required = true;
+  const removeButton = document.createElement("button");
+  removeButton.type = "button";
+  removeButton.className = "new-recipe-remove-button";
+  removeButton.textContent = "Remove";
+  removeButton.addEventListener("click", () => {
+    row.remove();
+    updateStepNumbers(row.parentElement);
+  });
+  row.append(number, input, removeButton);
+  return row;
+}
+
+function updateStepNumbers(stepsList) {
+  stepsList.querySelectorAll(".new-recipe-step-number").forEach((number, index) => {
+    number.textContent = `${index + 1}.`;
+  });
+}
+
 function filterRecipes() {
   renderRecipes();
 }
@@ -972,7 +1520,6 @@ function renderRecipes() {
     const card = document.createElement("button");
     card.type = "button";
     card.className = "recipe-card";
-    card.dataset.searchText = `${recipe.name} ${recipe.tags.join(" ")}`.toLowerCase();
     card.addEventListener("click", () => showRecipeDetail(recipe.id));
 
     const content = document.createElement("span");
@@ -1077,8 +1624,8 @@ function showRecipeDetail(recipeId) {
     const item = document.createElement("li");
     item.classList.add(ingredient.have ? "ingredient-have" : "ingredient-missing");
     item.textContent = ingredient.have
-      ? `✓ ${ingredient.qty} ${ingredient.unit} ${ingredient.name}`
-      : `✗ Missing ${ingredient.qty} ${ingredient.unit} ${ingredient.name}`;
+      ? `✓ ${ingredient.qty} ${unitLabel(ingredient.unit)} ${ingredient.name}`
+      : `✗ Missing ${ingredient.qty} ${unitLabel(ingredient.unit)} ${ingredient.name}`;
     ingredients.append(item);
   });
   ingredientsSection.append(ingredientsHeading, ingredients);
@@ -1146,7 +1693,7 @@ function showRecipeDetail(recipeId) {
   const scheduleBtn = document.createElement("button");
   scheduleBtn.type = "button";
   scheduleBtn.className = "btn-schedule-recipe";
-  scheduleBtn.textContent = "+ Add to Planner";
+  scheduleBtn.textContent = "+ Add to Meal Prep";
   const scheduleStatus = document.createElement("span");
   scheduleStatus.className = "recipe-schedule-status";
   scheduleBtn.addEventListener("click", () => {
@@ -1166,15 +1713,21 @@ function showRecipeDetail(recipeId) {
       scheduleStatus.className = "recipe-schedule-status success";
       scheduleStatus.textContent = `Scheduled for ${selectedDay}! All ingredients are in stock.`;
     }
-    const shortDayMap = {
-      Monday: "Mon", Tuesday: "Tue", Wednesday: "Wed", 
-      Thursday: "Thu", Friday: "Fri", Saturday: "Sat", Sunday: "Sun"
-    };
-    const targetShortLabel = shortDayMap[currentDay];
     const dayButtons = document.querySelectorAll(".day-btn");
-    const activeDayBtn = Array.from(dayButtons).find(btn => btn.textContent.trim() === currentDay);
-    if (activeDayBtn) {
-      showDay(currentDay, activeDayBtn);
+    const dayLabels = {
+      Monday: "Mon",
+      Tuesday: "Tue",
+      Wednesday: "Wed",
+      Thursday: "Thu",
+      Friday: "Fri",
+      Saturday: "Sat",
+      Sunday: "Sun"
+    };
+    const selectedDayBtn = Array.from(dayButtons).find(
+      (button) => button.textContent.trim() === dayLabels[selectedDay]
+    );
+    if (selectedDayBtn) {
+      showDay(selectedDay, selectedDayBtn);
     }
   });
   scheduleControls.append(daySelect, mealSelect, scheduleBtn);
